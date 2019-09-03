@@ -1,20 +1,8 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
-import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
-import MenuIcon from '@material-ui/icons/Menu';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -67,20 +55,21 @@ function createData(name, calories, fat, carbs, protein) {
 
 function Flight(props) {
 
-    const [data, setData] = useState([
-            createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-        ]
+    const [data, setData] = useState([]
     );
 
-
-    fetch('https://jsonplaceholder.typicode.com/posts')
-        .then(res => res.json())
-        .then((data) => {
-            data.map(data => {
-               return setData([createData('zzzzzzzz', 159, 6.0, 24, 4.0)])
-            })
+    if (!data.length) {
+        fetch('http://localhost:4000/api/flights', {
+            method: 'GET',
         })
-        .catch(console.log);
+            .then(res => res.json())
+            .then((response) => {
+                response["flights"].map((f) => {
+                    return setData([createData(f.from, f.to, f.departureTime, f.landingTime, f.price)])
+                });
+            })
+    }
+
 
     const {container} = props;
     const classes = useStyles();
@@ -94,46 +83,12 @@ function Flight(props) {
     const drawer = (
         <div>
             <div className={classes.toolbar}/>
-            <Divider/>
-            <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
-                        <ListItemText primary={text}/>
-                    </ListItem>
-                ))}
-            </List>
-            <Divider/>
-            <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
-                        <ListItemText primary={text}/>
-                    </ListItem>
-                ))}
-            </List>
         </div>
     );
 
     return (
         <div className={classes.root}>
             <CssBaseline/>
-            <AppBar position="fixed" className={classes.appBar}>
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        edge="start"
-                        onClick={handleDrawerToggle}
-                        className={classes.menuButton}
-                    >
-                        <MenuIcon/>
-                    </IconButton>
-                    <Typography variant="h6" noWrap>
-                        Responsive drawer
-                    </Typography>
-                </Toolbar>
-            </AppBar>
             <nav className={classes.drawer} aria-label="mailbox folders">
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Hidden smUp implementation="css">
@@ -199,10 +154,6 @@ function Flight(props) {
 }
 
 Flight.propTypes = {
-    /**
-     * Injected by the documentation to work in an iframe.
-     * You won't need it on your project.
-     */
     container: PropTypes.instanceOf(typeof Element === 'undefined' ? Object : Element),
 };
 
