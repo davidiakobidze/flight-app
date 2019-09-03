@@ -7,7 +7,15 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/api/hello', (req, res) => {
+let flights = [{
+    "from" : "Tbilisi",
+    "to" : "London",
+    "departureTime" : "12:00",
+    "landingTime" : "14:00",
+    "price" : "200$"
+}]
+
+app.get('/api/flights', (req, res) => {
     res.send({ express: 'Hello From Express' });
 });
 

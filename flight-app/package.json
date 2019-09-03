@@ -11,6 +11,8 @@
     "express": "^4.16.4"
   },
   "devDependencies": {
+    "@material-ui/core": "^4.4.0",
+    "@material-ui/icons": "^4.2.1",
     "concurrently": "^4.0.1"
   }
 }
